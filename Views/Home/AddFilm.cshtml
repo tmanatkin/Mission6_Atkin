@@ -7,32 +7,30 @@
     <h1 class="display-4">Add a Film to The Collection</h1>
     <p>Add a Film to The Collection</p>
 
-    <form method="post">
+    <form class="add-film-form" method="post">
 
-        <label asp-for="Category">Category</label>
-        <select asp-for="Category" required>
+        <input type="hidden" asp-for="MovieId"/>
+
+        <label asp-for="CategoryId">Category</label>
+        <select asp-for="CategoryId">
             <option value="" disabled selected>Select a category</option>
-            <option value="action/adventure">Action/Adventure</option>
-            <option value="comedy">Comedy</option>
-            <option value="drama">Drama</option>
-            <option value="family">Family</option>
-            <option value="horror/suspense">Horror/Suspense</option>
-            <option value="Television">Television</option>
-            <option value="VHS">VHS</option>
-            <option value="Miscellaneous">Miscellaneous</option>
+            @foreach (Category c in ViewBag.Categories)
+            {
+                <option value="@c.CategoryId">@c.CategoryName</option>
+            }
         </select>
 
         <label asp-for="Title">Title</label>
-        <input asp-for="Title" type="text" required/>
+        <input asp-for="Title" type="text" />
 
         <label asp-for="Year">Year</label>
-        <input asp-for="Year" type="number" required />
+        <input asp-for="Year" type="number"  />
 
         <label asp-for="Director">Director</label>
-        <input asp-for="Director" type="text" required />
+        <input asp-for="Director" type="text"  />
 
         <label asp-for="Rating">Rating</label>
-        <select asp-for="Rating" required>
+        <select asp-for="Rating" >
             <option value="" disabled selected>Select a rating</option>
             <option value="G">G</option>
             <option value="PG">PG</option>
@@ -53,9 +51,16 @@
         <label asp-for="LentTo">Lent to:</label>
         <input asp-for="LentTo" type="text" />
 
+        <container class="checkbox-container">
+            <label asp-for="CopiedToPlex">Copied To Plex?</label>
+            <input asp-for="CopiedToPlex" type="checkbox" value="true">
+        </container>
+
         <label asp-for="Notes">Notes</label>
         <input asp-for="Notes" type="text" maxlength="25"/>
 
         <button>Submit</button>
+
+        <div asp-validation-summary="All"></div>
     </form>
 </div>

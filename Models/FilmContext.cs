@@ -4,11 +4,9 @@ namespace Mission6.Models
 {
     public class FilmContext : DbContext
     {
-        // constructor
-        public FilmContext(DbContextOptions<FilmContext> options) :base(options)
-        {
-        }
+        public FilmContext(DbContextOptions<FilmContext> options) :base(options) { } // constructor
 
-        public DbSet<Film> films { get; set; }
+        public DbSet<Film> Movies { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }

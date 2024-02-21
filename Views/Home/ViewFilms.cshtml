@@ -1,0 +1,49 @@
+﻿@model List<Film>
+
+<table class="table table-bordered">
+    <thead class="fw-bold">
+        <tr>
+            <td>Category</td>
+            <td>Title</td>
+            <td>Year</td>
+            <td>Director</td>
+            <td>Rating</td>
+            <td>Edited</td>
+            <td>LentTo</td>
+            <td>Copied To Plex</td>
+            <td>Notes</td>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- iterate for each row -->
+        @foreach (var film in Model)
+        {
+            <!-- get category name from id using viewbag-->
+            string categoryValue = "";
+                @foreach (Category c in ViewBag.Categories)
+                {
+                    if (film.CategoryId == c.CategoryId)
+                    {
+                        categoryValue = c.CategoryName;
+                    }
+                }
+            <!-- create row -->
+            <tr>
+                <td>@categoryValue</td>
+                <td>@film.Title</td>
+                <td>@film.Year</td>
+                <td>@film.Director</td>
+                <td>@film.Rating</td>
+                <td>@(film.Edited ? "Yes" : "No")</td>
+                <td>@film.LentTo</td>
+                <td>@(film.CopiedToPlex ? "Yes" : "No")</td>
+                <td>@film.Notes</td>
+
+                <!-- edit and delete buttons -->
+                <td><a asp-controller="Home" asp-action="EditFilm" asp-route-id="@film.MovieId">Edit</a></td>
+                <td><a asp-controller="Home" asp-action="DeleteFilm" asp-route-id="@film.MovieId">Delete</a></td>
+            </tr>
+        }
+    </tbody>
+
+</table>

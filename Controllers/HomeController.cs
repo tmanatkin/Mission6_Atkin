@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Mission6.Models;
 using System.Diagnostics;
 
@@ -7,17 +8,10 @@ namespace Mission6.Controllers
     public class HomeController : Controller
     {
         private FilmContext _context;
-        public HomeController(FilmContext temp) 
+        public HomeController(FilmContext temp)
         {
             _context = temp;
         }
-
-        //private readonly ILogger<HomeController> _logger;
-
-        //public HomeController(ILogger<HomeController> logger)
-        //{
-        //    _logger = logger;
-        //}
 
         public IActionResult Index()
         {
@@ -31,29 +25,92 @@ namespace Mission6.Controllers
 
         public IActionResult AddFilm()
         {
-            return View();
+            // add viewbag to populate dropdown
+            ViewBag.Categories = _context.Categories.ToList();
+
+            return View(new Film());
         }
 
+        // add film submission action
         [HttpPost]
-        public IActionResult AddFilm(Film response)
+        public IActionResult AddFilm(Film submission)
         {
-
-            // set null values to empty strings
-            if (response.Notes == null)
+            if (ModelState.IsValid)
             {
-                response.Notes = "";
-            }
-            if (response.LentTo == null)
-            {
-                response.LentTo = "";
-            }
+                // add record to database
+                _context.Movies.Add(submission);
+                _context.SaveChanges();
 
-            // add record to database
-            _context.films.Add(response);
+                // return submitted response in film added view
+                return View("FilmAdded", submission);
+            }
+            else
+            {
+                // add viewbag to populate dropdown
+                ViewBag.Categories = _context.Categories.ToList();
+
+                return View(submission);
+            }
+        }
+
+        public IActionResult ViewFilms()
+        {
+            // add viewbag so categories can display in table
+            ViewBag.Categories = _context.Categories.ToList();
+
+            var Movies = _context.Movies.ToList();
+            return View(Movies);
+        }
+
+        public IActionResult EditFilm(int id)
+        {
+            // single record that is edited
+            var record = _context.Movies
+                .Single(x => x.MovieId == id);
+
+            // add viewbag to populate dropdown
+            ViewBag.Categories = _context.Categories.ToList();
+
+            return View("AddFilm", record);
+        }
+
+        // edit film submission action
+        [HttpPost]
+        public IActionResult EditFilm(Film submission)
+        {
+            if (ModelState.IsValid)
+            {
+                // edit record in database
+                _context.Update(submission);
+                _context.SaveChanges();
+
+                return RedirectToAction("ViewFilms");
+            }
+            else
+            {
+                // add viewbag to populate dropdown
+                ViewBag.Categories = _context.Categories.ToList();
+
+                return View("AddFilm", submission);
+            }
+        }
+
+        public IActionResult DeleteFilm(int id)
+        {
+            var record = _context.Movies
+                .Single(x => x.MovieId == id);
+
+            return View("DeleteFilmConfirmation", record);
+        }
+
+        // delete film submission action
+        [HttpPost]
+        public IActionResult DeleteFilm(Film submission)
+        {
+            _context.Movies.Remove(submission);
             _context.SaveChanges();
 
-            // return submitted response in film added view
-            return View("FilmAdded", response);
+            return RedirectToAction("ViewFilms");
         }
     }
 }
